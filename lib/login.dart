@@ -1,5 +1,11 @@
+import 'package:besafe/main.dart';
+import 'package:besafe/sigin.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:auth_buttons/auth_buttons.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,6 +15,68 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+  bool isLoggingIn = false;
+
+  _logInWithFacebook() async {
+    setState(() {
+      isLoggingIn = true;
+    });
+
+    try {
+      final facebookLoginResult = await FacebookAuth.instance.login();
+      final userData = await FacebookAuth.instance.getUserData();
+      final facebookAuthCredentials = FacebookAuthProvider.credential(facebookLoginResult.accessToken!.token);
+      await FirebaseAuth.instance.signInWithCredential(facebookAuthCredentials);
+      await FirebaseFirestore.instance.collection('users').add({
+        'email': userData['email'],
+        'imageUrl': userData['picture']['data']['url'],
+        'name': userData['name']
+      });
+
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => MyHomePage(title: "dupa")), (route) => false);
+    } on FirebaseAuthException catch (e) {
+      var title = '';
+
+      switch (e.code) {
+        case 'account-exists-with-different-credentials':
+          title = 'This accoutn exists with a different sign in provider';
+          break;
+        case 'invalid-credentials':
+          title = 'Unknown error has occured';
+          break;
+        case 'operation-not-allowed':
+          title = 'This operation is not allowed';
+          break;
+        case 'user-disabled':
+          title = 'The user you tried to log into is disabled';
+          break;
+        case 'user-not-found':
+          title = 'The user you tried to log into was not found';
+          break;
+      }
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Log in with facebook failed'),
+            content: Text(title),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              )
+            ],
+          ));
+    } finally {
+      setState(() {
+        isLoggingIn = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,16 +160,14 @@ class _LoginState extends State<Login> {
             
             
             FacebookAuthButton(
-              onPressed: (() {
-                
-              }),
+              onPressed: _logInWithFacebook
             ),
             TextButton(
-              child: Text('I already have an account'),
+              child: Text("I dont have account"),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Login()),
+                  MaterialPageRoute(builder: (context) => const SignIn()),
                 );
               },
             ),
