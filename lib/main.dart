@@ -1,4 +1,6 @@
+import 'package:besafe/sigin.dart';
 import 'package:flutter/material.dart';
+
 //import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -76,14 +78,18 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          const Padding(
+           Padding(
             padding: EdgeInsets.only(top: 200.0, right: 100.0),
             // ignore: unnecessary_const
             child: ElevatedButton(
-              onPressed: null,
-              //s,
-
               child: Text('Get started'),
+              onPressed: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignIn()),
+                );
+            },
+              //s,
             ),
           )
         ],
