@@ -1,4 +1,4 @@
-import 'package:besafe/sigin.dart';
+import 'package:besafe/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:google_fonts/google_fonts.dart';
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SignIn()),
+                MaterialPageRoute(builder: (context) => const SignUp()),
                 );
             },
               //s,

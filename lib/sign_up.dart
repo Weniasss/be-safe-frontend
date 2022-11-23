@@ -1,103 +1,48 @@
-import 'package:besafe/main.dart';
-import 'package:besafe/sign_up.dart';
+import 'package:besafe/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:auth_buttons/auth_buttons.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+import 'main.dart';
+
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginState extends State<Login> {
-  bool isLoggingIn = false;
+class _SignUpState extends State<SignUp> {
+  final repeatPasswordController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
+    repeatPasswordController.dispose();
     emailController.dispose();
     passwordController.dispose();
-
     super.dispose();
   }
 
-  _logInWithEmail() async {
+  Future signUp() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
-    setState(() {
-      isLoggingIn = true;
-    });
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim());
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => MyHomePage(title: "dupa")),
-        (route) => false);
-  }
-
-  _logInWithFacebook() async {
-    setState(() {
-      isLoggingIn = true;
-    });
-
     try {
-      final facebookLoginResult = await FacebookAuth.instance.login();
-      final userData = await FacebookAuth.instance.getUserData();
-      final facebookAuthCredentials = FacebookAuthProvider.credential(
-          facebookLoginResult.accessToken!.token);
-      await FirebaseAuth.instance.signInWithCredential(facebookAuthCredentials);
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
       await FirebaseFirestore.instance.collection('users').add({
-        'email': userData['email'],
+        'email': emailController.text.trim()
       });
-
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => MyHomePage(title: "")),
           (route) => false);
     } on FirebaseAuthException catch (e) {
-      var title = '';
-
-      switch (e.code) {
-        case 'account-exists-with-different-credentials':
-          title = 'This accoutn exists with a different sign in provider';
-          break;
-        case 'invalid-credentials':
-          title = 'Unknown error has occured';
-          break;
-        case 'operation-not-allowed':
-          title = 'This operation is not allowed';
-          break;
-        case 'user-disabled':
-          title = 'The user you tried to log into is disabled';
-          break;
-        case 'user-not-found':
-          title = 'The user you tried to log into was not found';
-          break;
-      }
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text('Log in with facebook failed'),
-                content: Text(title),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('OK'),
-                  )
-                ],
-              ));
-    } finally {
-      setState(() {
-        isLoggingIn = false;
-      });
+      print(e);
     }
   }
 
@@ -110,7 +55,7 @@ class _LoginState extends State<Login> {
         // ignore: prefer_const_constructors
         decoration: BoxDecoration(
           image: const DecorationImage(
-            image: AssetImage("assets/login.jpg"),
+            image: AssetImage("assets/signIn.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -124,7 +69,7 @@ class _LoginState extends State<Login> {
                 padding: EdgeInsets.all(50.0),
               ),
               const Text(
-                "Log in to\n Account",
+                "Create\n Account",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 50.0,
@@ -138,7 +83,7 @@ class _LoginState extends State<Login> {
               //username textfield
               SizedBox(
                 width: 300,
-                height: 70,
+                height: 100,
                 child: TextFormField(
                   decoration: InputDecoration(
                     filled: true,
@@ -158,10 +103,10 @@ class _LoginState extends State<Login> {
                           : null,
                 ),
               ),
-              //password textbox
+              //email textfield
               SizedBox(
                 width: 300,
-                height: 70,
+                height: 100,
                 child: TextFormField(
                   decoration: InputDecoration(
                     filled: true,
@@ -175,8 +120,31 @@ class _LoginState extends State<Login> {
                   showCursor: false,
                   controller: passwordController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) => value != null && value.length < 6
-                      ? 'Enter min. 6 characters'
+                  validator: (value) =>
+                      value != null && value.length < 6
+                          ? 'Enter min. 6 characters'
+                          : null,
+                ),
+              ),
+              //password textbox
+              SizedBox(
+                width: 300,
+                height: 100,
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    labelText: 'Repeat Password',
+                  ),
+                  obscureText: true,
+                  showCursor: false,
+                  controller: repeatPasswordController,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => value != null && (value.length < 6 || value != passwordController.text)
+                      ? 'Passwords must be same'
                       : null,
                 ),
               ),
@@ -186,22 +154,20 @@ class _LoginState extends State<Login> {
                 width: 200,
                 height: 40,
                 child: ElevatedButton(
-                  onPressed: _logInWithEmail,
-                  child: Text('Log in'),
+                  onPressed: signUp,
+                  child: Text('Sign up'),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromRGBO(0, 86, 91, 1),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10))),
                 ),
               ),
-
-              FacebookAuthButton(onPressed: _logInWithFacebook),
               TextButton(
-                child: Text("I dont have account"),
+                child: Text('I already have an account'),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SignUp()),
+                    MaterialPageRoute(builder: (context) => const Login()),
                   );
                 },
               ),
