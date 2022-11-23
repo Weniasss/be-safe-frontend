@@ -17,6 +17,29 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
 
   bool isLoggingIn = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
+  }
+
+  _logInWithEmail() async {
+    setState(() {
+      isLoggingIn = true;
+    });
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim()
+    );
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => MyHomePage(title: "dupa")), (route) => false);
+  }
 
   _logInWithFacebook() async {
     setState(() {
@@ -35,7 +58,7 @@ class _LoginState extends State<Login> {
       });
 
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => MyHomePage(title: "dupa")), (route) => false);
+          MaterialPageRoute(builder: (_) => MyHomePage(title: "")), (route) => false);
     } on FirebaseAuthException catch (e) {
       var title = '';
 
@@ -124,6 +147,7 @@ class _LoginState extends State<Login> {
                 ),
                 obscureText: false,
                 showCursor: false,
+                controller: emailController,
               ),
             ),
             //password textbox
@@ -141,6 +165,7 @@ class _LoginState extends State<Login> {
                 ),
                 obscureText: true,
                 showCursor: false,
+                controller: passwordController,
               ),
             ),
             //signin button #00565Bcolor
@@ -149,7 +174,7 @@ class _LoginState extends State<Login> {
               width: 200,
               height:40,
               child:ElevatedButton(
-                onPressed: null,
+                onPressed: _logInWithEmail,
                 child: Text('Log in'),
                 style: ElevatedButton.styleFrom( 
                     backgroundColor: Color.fromRGBO(0, 86, 91, 1), 
