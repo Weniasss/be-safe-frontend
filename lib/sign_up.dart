@@ -35,9 +35,9 @@ class _SignUpState extends State<SignUp> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
-      await FirebaseFirestore.instance.collection('users').add({
-        'email': emailController.text.trim()
-      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .add({'email': emailController.text.trim()});
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => MyHomePage(title: "")),
           (route) => false);
@@ -78,7 +78,7 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.all(100.0),
+                padding: EdgeInsets.all(10.0),
               ),
               //username textfield
               SizedBox(
@@ -120,10 +120,9 @@ class _SignUpState extends State<SignUp> {
                   showCursor: false,
                   controller: passwordController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) =>
-                      value != null && value.length < 6
-                          ? 'Enter min. 6 characters'
-                          : null,
+                  validator: (value) => value != null && value.length < 6
+                      ? 'Enter min. 6 characters'
+                      : null,
                 ),
               ),
               //password textbox
@@ -143,7 +142,8 @@ class _SignUpState extends State<SignUp> {
                   showCursor: false,
                   controller: repeatPasswordController,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) => value != null && (value.length < 6 || value != passwordController.text)
+                  validator: (value) => value != null &&
+                          (value.length < 6 || value != passwordController.text)
                       ? 'Passwords must be same'
                       : null,
                 ),
