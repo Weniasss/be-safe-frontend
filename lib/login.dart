@@ -1,3 +1,4 @@
+import 'package:besafe/currentLocationScreen.dart';
 import 'package:besafe/main.dart';
 import 'package:besafe/map.dart';
 import 'package:besafe/sign_up.dart';
@@ -39,7 +40,8 @@ class _LoginState extends State<Login> {
         email: emailController.text.trim(),
         password: passwordController.text.trim());
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => MapTask()), (route) => false);
+        MaterialPageRoute(builder: (_) => CurrentLocationScreen()),
+        (route) => false);
   }
 
   _logInWithFacebook() async {
@@ -58,7 +60,8 @@ class _LoginState extends State<Login> {
       });
 
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => MapTask ()), (route) => false);
+          MaterialPageRoute(builder: (_) => CurrentLocationScreen()),
+          (route) => false);
     } on FirebaseAuthException catch (e) {
       var title = '';
 
@@ -132,7 +135,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.all(100.0),
+                padding: EdgeInsets.all(50.0),
               ),
               //username textfield
               SizedBox(

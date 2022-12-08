@@ -1,3 +1,4 @@
+import 'package:besafe/currentLocationScreen.dart';
 import 'package:besafe/map.dart';
 import 'package:besafe/sign_up.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SignUp()),
+                  MaterialPageRoute(
+                      builder: (context) =>  CurrentLocationScreen()),
                 );
               },
               //s,

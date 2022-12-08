@@ -10,6 +10,9 @@ import facebook_auth_desktop
 import firebase_auth
 import firebase_core
 import flutter_secure_storage_macos
+import geolocator_apple
+import location
+import package_info_plus
 import path_provider_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
@@ -18,5 +21,8 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
   FlutterSecureStorageMacosPlugin.register(with: registry.registrar(forPlugin: "FlutterSecureStorageMacosPlugin"))
+  GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))
+  LocationPlugin.register(with: registry.registrar(forPlugin: "LocationPlugin"))
+  FLTPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FLTPackageInfoPlusPlugin"))
   PathProviderPlugin.register(with: registry.registrar(forPlugin: "PathProviderPlugin"))
 }
