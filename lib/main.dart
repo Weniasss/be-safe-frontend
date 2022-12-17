@@ -90,10 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MapTask()),
+                  MaterialPageRoute(builder: (context) => Homepage1()),
                 );
               },
-              //s,
             ),
           )
         ],
@@ -102,6 +101,4 @@ class _MyHomePageState extends State<MyHomePage> {
         // This trailing comma makes auto-formatting nicer for build methods.
         );
   }
-
- 
 }

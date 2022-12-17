@@ -81,3 +81,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.facebook.android:facebook-login:latest.release'
 }
+
