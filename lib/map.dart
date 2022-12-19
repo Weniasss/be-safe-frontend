@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:besafe/get_data/get_info.dart';
 import 'package:besafe/location_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_info_window/custom_info_window.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -46,10 +47,13 @@ class _HomepageState1 extends State<Homepage1> {
 
   late double longtude;
 
+  CustomInfoWindowController _customInfoWindowController =
+      CustomInfoWindowController();
+
   final passwordController = TextEditingController();
   final emailController = TextEditingController();
 
-   TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
 
   late String Choise = 'Ess';
 
@@ -72,11 +76,42 @@ class _HomepageState1 extends State<Homepage1> {
                       element.data()["longitude"].toString());
               Marker _marker = Marker(
                   markerId: markerId,
+                          onTap: () {
+
+          _customInfoWindowController.addInfoWindow!(
+            Container(
+              height: 300,
+              width: 200,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 300,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            LatLng(
+                      element.data()["latitude"], element.data()["longitude"]),
+          );
+        },
                   position: LatLng(
                       element.data()["latitude"], element.data()["longitude"]),
                   icon: BitmapDescriptor.defaultMarkerWithHue(
                       BitmapDescriptor.hueCyan),
-                  infoWindow: InfoWindow(snippet: element.data()["Address"]));
+                  infoWindow: InfoWindow(title: "Marker"));
               setState(() {
                 markers[markerId] = _marker;
               });
@@ -90,6 +125,7 @@ class _HomepageState1 extends State<Homepage1> {
     Marker _marker = Marker(
         markerId: markerId,
         position: LatLng(lat, long),
+
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
         infoWindow: InfoWindow(snippet: "addres"));
     setState(() {
@@ -144,6 +180,7 @@ class _HomepageState1 extends State<Homepage1> {
                 child: Stack(children: <Widget>[
                   GoogleMap(
                     onTap: (tapped) async {
+                      
                       latitude = tapped.latitude;
                       longtude = tapped.longitude;
 
@@ -153,6 +190,7 @@ class _HomepageState1 extends State<Homepage1> {
                           .findAddressesFromCoordinates(coordinated);
                       var firstAddress = adrress.first;
                       getMarkers(tapped.latitude, tapped.longitude);
+                      _customInfoWindowController.hideInfoWindow!();
                       // await FirebaseFirestore.instance.collection('location').add({
                       //   'latitude': tapped.latitude,
                       //   'longitude': tapped.longitude,
@@ -160,6 +198,9 @@ class _HomepageState1 extends State<Homepage1> {
                       //   'Country': firstAddress.countryName,
                       //   'PostalCode': firstAddress.postalCode,
                       // });
+                    },
+                    onCameraMove: (position) {
+                      _customInfoWindowController.onCameraMove!();
                     },
                     mapType: MapType.normal,
                     compassEnabled: true,
@@ -172,6 +213,12 @@ class _HomepageState1 extends State<Homepage1> {
                     initialCameraPosition: _kGooglePlex,
                     markers: Set<Marker>.of(markers.values),
                   ),
+                  CustomInfoWindow(
+                    controller: _customInfoWindowController,
+                    height: 200,
+                    width: 200,
+                    offset: 35,
+                  ),
                   Align(
                       alignment: Alignment.bottomLeft,
                       // add your floating action button
@@ -180,7 +227,6 @@ class _HomepageState1 extends State<Homepage1> {
                             left: 30, bottom: 30, right: 20, top: 5),
                         child: FloatingActionButton(
                           onPressed: () async {
-                            // print("click");
                             showModalBottomSheet(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
@@ -319,124 +365,13 @@ class _HomepageState1 extends State<Homepage1> {
                         ),
                       )),
                 ])),
-            // ElevatedButton(
-            //   child: Text('Get started'),
-            //   onPressed: () async {
-            //     //   getMarkers(latitude,longtude);
-            //     //   await FirebaseFirestore.instance.collection('location').add({
-            //     //     'latitude': latitude,
-            //     //     'longitude': longtude,
-            //     //     'Address': 'wrr',
-            //     //     'Country': 'wrr',
-            //     //     'PostalCode': 12345,
-            //     //   });
-            //     // print("click");
-            //     showModalBottomSheet(
-            //         shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.only(
-            //                 topLeft: Radius.circular(20),
-            //                 topRight: Radius.circular(20))),
-            //         isScrollControlled: true,
-            //         context: context,
-            //         builder: (context) {
-            //           return Column(
-            //             mainAxisSize: MainAxisSize.min,
-            //             children: [
-            //               SizedBox(
-            //                 width: 20,
-            //                 height: 20,
-            //               ),
-            //               Padding(
-            //                 padding: EdgeInsets.only(
-            //                     left: 20,
-            //                     bottom: 5,
-            //                     right: 20,
-            //                     top: 5), //apply padding to all four sides
-            //                 child: TextFormField(
-            //                   decoration: InputDecoration(
-            //                     filled: true,
-            //                     fillColor: Colors.white,
-            //                     border: OutlineInputBorder(
-            //                       borderRadius: BorderRadius.circular(10.0),
-            //                     ),
-            //                     labelText: 'Type of incydent',
-            //                   ),
-            //                   showCursor: false,
-            //                   controller: passwordController,
-            //                   autovalidateMode:
-            //                       AutovalidateMode.onUserInteraction,
-            //                   validator: (value) =>
-            //                       value != null && value.length < 6
-            //                           ? 'Enter min. 6 characters'
-            //                           : null,
-            //                 ),
-            //               ),
-            //               Padding(
-            //                 padding: EdgeInsets.only(
-            //                     left: 20,
-            //                     bottom: 10,
-            //                     right: 20,
-            //                     top: 5), //apply padding to all four sides
-            //                 child: TextFormField(
-            //                   textAlignVertical: TextAlignVertical.top,
-            //                   minLines: 2,
-            //                   keyboardType: TextInputType.multiline,
-            //                   maxLines: null,
-            //                   decoration: InputDecoration(
-            //                     filled: true,
-            //                     fillColor: Colors.white,
-            //                     border: OutlineInputBorder(
-            //                       borderRadius: BorderRadius.circular(10.0),
-            //                     ),
-            //                     labelText: 'What happen ?',
-            //                   ),
-            //                   showCursor: false,
-            //                   controller: passwordController,
-            //                   autovalidateMode:
-            //                       AutovalidateMode.onUserInteraction,
-            //                   validator: (value) =>
-            //                       value != null && value.length < 6
-            //                           ? 'Enter min. 6 characters'
-            //                           : null,
-            //                 ),
-            //               ),
-            //               SizedBox(
-            //                 width: 130, // <-- Your width
-            //                 height: 50, // <-- Your height
-            //                 child: ElevatedButton(
-            //                   style: ElevatedButton.styleFrom(
-            //                       backgroundColor: Color.fromRGBO(0, 86, 91, 1),
-            //                       textStyle: const TextStyle(
-            //                         fontSize: 17,
-            //                         fontWeight: FontWeight.w500,
-            //                       ),
-            //                       shape: RoundedRectangleBorder(
-            //                           borderRadius: BorderRadius.circular(10))),
-            //                   child: const Text('Add'),
-            //                   onPressed: () {
-            //                     Navigator.pop(context);
-            //                   },
-            //                 ),
-            //               ),
-            //               Container(
-            //                 padding: EdgeInsets.all(8),
-            //                 child: Padding(
-            //                   padding: EdgeInsets.only(
-            //                       bottom:
-            //                           MediaQuery.of(context).viewInsets.bottom),
-            //                 ),
-            //               )
-            //             ],
-            //           );
-            //         });
-            //   },
-            // ),
           ],
         ),
       ),
     );
   }
-   Future<void> _goToPlace(Map<String, dynamic> place) async {
+
+  Future<void> _goToPlace(Map<String, dynamic> place) async {
     final double lat = place['geometry']['location']['lat'];
     final double lng = place['geometry']['location']['lng'];
 
