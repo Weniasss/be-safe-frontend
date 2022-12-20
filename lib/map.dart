@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:besafe/get_data/get_info.dart';
+import 'package:besafe/local_notification_service.dart';
 import 'package:besafe/location_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_info_window/custom_info_window.dart';
@@ -51,6 +52,8 @@ class _HomepageState1 extends State<Homepage1> {
   late double latitude;
 
   late double longtude;
+
+  late final LocalNotificationService service;
 
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
@@ -304,6 +307,8 @@ class _HomepageState1 extends State<Homepage1> {
   @override
   void initState() {
     getDataBase();
+    service = LocalNotificationService();
+    service.intialize();
     super.initState();
   }
 
