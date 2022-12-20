@@ -46,6 +46,7 @@ class _HomepageState1 extends State<Homepage1> {
   //late String address;
   late String country;
   late String code;
+  String dropdownValue = list.first;
 
   late double latitude;
 
@@ -62,6 +63,8 @@ class _HomepageState1 extends State<Homepage1> {
   late String Choise = 'Ess';
 
   final _productSizedList = ["Small", "Medium", "Large"];
+  static const List<String> list = <String>['Crime', 'Car accident', 'Theft', 'Fight'];
+
   String _selectedVal = "";
 
   // email: emailController.text.trim(),
@@ -198,10 +201,7 @@ class _HomepageState1 extends State<Homepage1> {
 
                                           markers.removeWhere(
                                               (key, value) => key == val);
-                                          setState(() {
-
-                                          });
-
+                                          setState(() {});
                                         },
                                       ),
                                     ),
@@ -348,138 +348,153 @@ class _HomepageState1 extends State<Homepage1> {
                                 isScrollControlled: true,
                                 context: context,
                                 builder: (context) {
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 20,
-                                            bottom: 5,
-                                            right: 20,
-                                            top:
-                                                5), //apply padding to all four sides
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            labelText: 'Type of incydent',
-                                          ),
-                                          showCursor: false,
-                                          controller: passwordController,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          validator: (value) =>
-                                              value != null && value.length < 6
-                                                  ? 'Enter min. 6 characters'
-                                                  : null,
+                                  return StatefulBuilder(builder: (BuildContext
+                                          context,
+                                      StateSetter
+                                          setState /*You can rename this!*/) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 20,
-                                            bottom: 10,
-                                            right: 20,
-                                            top:
-                                                5), //apply padding to all four sides
-                                        child: TextFormField(
-                                          textAlignVertical:
-                                              TextAlignVertical.top,
-                                          minLines: 2,
-                                          keyboardType: TextInputType.multiline,
-                                          maxLines: null,
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                            ),
-                                            labelText: 'What happen ?',
-                                          ),
-                                          showCursor: false,
-                                          controller: emailController,
-                                          autovalidateMode: AutovalidateMode
-                                              .onUserInteraction,
-                                          validator: (value) =>
-                                              value != null && value.length < 6
-                                                  ? 'Enter min. 6 characters'
-                                                  : null,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 130, // <-- Your width
-                                        height: 50, // <-- Your height
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Color.fromRGBO(0, 86, 91, 1),
-                                              textStyle: const TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10))),
-                                          child: const Text('Add'),
-                                          onPressed: () async {
-                                            final coordinated =
-                                                new geoCo.Coordinates(
-                                                    latitude, longtude);
-                                            var adrress = await geoCo
-                                                .Geocoder.local
-                                                .findAddressesFromCoordinates(
-                                                    coordinated);
-                                            var firstAddress = adrress.first;
+                                        
 
-                                            getMarkers(
-                                                latitude,
-                                                longtude,
-                                                emailController.text.trim(),
-                                                passwordController.text.trim());
-
-                                            await FirebaseFirestore.instance
-                                                .collection('location')
-                                                .add({
-                                              'latitude': latitude,
-                                              'longitude': longtude,
-                                              'Description':
-                                                  emailController.text.trim(),
-                                              'Type': passwordController.text
-                                                  .trim(),
-                                              'Address':
-                                                  firstAddress.addressLine,
-                                              'Country':
-                                                  firstAddress.countryName,
-                                              'PostalCode':
-                                                  firstAddress.postalCode,
-                                              'Time': DateTime.now()
-                                                  .add(Duration(minutes: 30)),
-                                            });
-
-                                            // Navigator.pop(context);
-                                          },
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.all(8),
-                                        child: Padding(
+                                        Padding(
                                           padding: EdgeInsets.only(
-                                              bottom: MediaQuery.of(context)
-                                                  .viewInsets
-                                                  .bottom),
+                                              left: 20,
+                                              bottom: 10,
+                                              right: 20,
+                                              top:
+                                                  5), //apply padding to all four sides
+                                          child: DropdownButton<String>(
+                                            isExpanded: true,
+                                            value: dropdownValue,
+                                            icon: const Icon(
+                                                Icons.arrow_downward),
+                                            elevation: 16,
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w400,
+                                                color: Colors.black),
+                                            underline: Container(
+                                              height: 2,
+                                              width: 300,
+                                              
+                                              color: Colors.grey,
+                                            ),
+                                            onChanged: (String? value) {
+                                              // This is called when the user selects an item.
+                                              setState(() {
+                                                dropdownValue = value!;
+                                              });
+                                            },
+                                            items: list
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                          ),
                                         ),
-                                      )
-                                    ],
-                                  );
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              bottom: 20,
+                                              right: 20,
+                                              top:5), //apply padding to all four sides
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              fillColor: Colors.white,
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                              labelText: 'Description',
+                                            ),
+                                            showCursor: false,
+                                            controller: passwordController,
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
+                                            validator: (value) =>
+                                                value != null &&
+                                                        value.length < 6
+                                                    ? 'Enter min. 6 characters'
+                                                    : null,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 130, // <-- Your width
+                                          height: 50, // <-- Your height
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromRGBO(
+                                                    0, 86, 91, 1),
+                                                textStyle: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10))),
+                                            child: const Text('Add'),
+                                            onPressed: () async {
+                                              final coordinated =
+                                                  new geoCo.Coordinates(
+                                                      latitude, longtude);
+                                              var adrress = await geoCo
+                                                  .Geocoder.local
+                                                  .findAddressesFromCoordinates(
+                                                      coordinated);
+                                              var firstAddress = adrress.first;
+
+                                              getMarkers(
+                                                  latitude,
+                                                  longtude,
+                                                  emailController.text.trim(),
+                                                  passwordController.text
+                                                      .trim());
+
+                                              await FirebaseFirestore.instance
+                                                  .collection('location')
+                                                  .add({
+                                                'latitude': latitude,
+                                                'longitude': longtude,
+                                                'Description':
+                                                    emailController.text.trim(),
+                                                'Type': passwordController.text
+                                                    .trim(),
+                                                'Address':
+                                                    firstAddress.addressLine,
+                                                'Country':
+                                                    firstAddress.countryName,
+                                                'PostalCode':
+                                                    firstAddress.postalCode,
+                                                'Time': DateTime.now()
+                                                    .add(Duration(minutes: 30)),
+                                              });
+
+                                              // Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(8),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  });
                                 });
                           },
                           child: Icon(Icons.add),
