@@ -63,7 +63,24 @@ class _HomepageState1 extends State<Homepage1> {
   late String Choise = 'Ess';
 
   final _productSizedList = ["Small", "Medium", "Large"];
-  static const List<String> list = <String>['Crime', 'Car accident', 'Theft', 'Fight'];
+  static const List<String> list = <String>[
+    'Crime',
+    'Car accident',
+    'Theft',
+    'Fight'
+  ];
+
+  Map<String, double> colors = <String, double>{
+    "Crime": BitmapDescriptor.hueRed,
+    "Fight": BitmapDescriptor.hueOrange,
+    "Car accident": BitmapDescriptor.hueRose,
+    "Theft": BitmapDescriptor.hueViolet
+  };
+
+  bool isChecked1 = true;
+  bool isChecked2 = true;
+  bool isChecked3 = true;
+  bool isChecked4 = true;
 
   String _selectedVal = "";
 
@@ -75,6 +92,18 @@ class _HomepageState1 extends State<Homepage1> {
 
   String tdata =
       DateFormat("HH:mm:ss").format(DateTime.now().add(Duration(minutes: 30)));
+
+  Color getColor(Set<MaterialState> states) {
+    const Set<MaterialState> interactiveStates = <MaterialState>{
+      MaterialState.pressed,
+      MaterialState.hovered,
+      MaterialState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Colors.blue;
+    }
+    return Colors.red;
+  }
 
   Future getDataBase() async {
     await FirebaseFirestore.instance
@@ -160,6 +189,7 @@ class _HomepageState1 extends State<Homepage1> {
                                             'Time': DateTime.now()
                                                 .add(Duration(minutes: 30)),
                                           });
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ),
@@ -202,6 +232,7 @@ class _HomepageState1 extends State<Homepage1> {
                                           markers.removeWhere(
                                               (key, value) => key == val);
                                           setState(() {});
+                                          Navigator.pop(context);
                                         },
                                       ),
                                     ),
@@ -225,24 +256,45 @@ class _HomepageState1 extends State<Homepage1> {
                 position: LatLng(
                     element.data()["latitude"], element.data()["longitude"]),
                 icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueCyan),
+                    colors[element.data()["Type"]]!),
               );
               if (dateTime.isAfter(DateTime.now())) {
-                setState(() {
-                  markers[markerId] = _marker;
-                });
+                if (isChecked1 == true &&
+                    element.data()["Type"] == "Car accident") {
+                  print("_______________" + element.data()["Type"]);
+                  setState(() {
+                    markers[markerId] = _marker;
+                  });
+                }
+                if (isChecked2 == true && element.data()["Type"] == "Theft") {
+                  setState(() {
+                    markers[markerId] = _marker;
+                  });
+                }
+                if (isChecked3 == true && element.data()["Type"] == "Fight") {
+                  setState(() {
+                    markers[markerId] = _marker;
+                  });
+                }
+                if (isChecked4 == true && element.data()["Type"] == "Crime") {
+                  setState(() {
+                    markers[markerId] = _marker;
+                  });
+                }
               }
 
-              print(element.data()["Country"]);
+              print(
+                  element.data()["Country"] + "-----------------------------");
             }));
   }
 
   void getMarkers(double lat, double long, String description, String type) {
     MarkerId markerId = MarkerId(lat.toString() + long.toString());
+
     Marker _marker = Marker(
         markerId: markerId,
         position: LatLng(lat, long),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
         infoWindow: InfoWindow(snippet: "addres"));
     setState(() {
       markers[markerId] = _marker;
@@ -272,6 +324,13 @@ class _HomepageState1 extends State<Homepage1> {
           children: [
             Row(
               children: [
+                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 15,
+                                                      bottom: 0,
+                                                      right: 0,
+                                                      top:
+                                                          0),),
                 Expanded(
                     child: TextFormField(
                   controller: _searchController,
@@ -337,7 +396,7 @@ class _HomepageState1 extends State<Homepage1> {
                       // add your floating action button
                       child: Padding(
                         padding: EdgeInsets.only(
-                            left: 30, bottom: 30, right: 20, top: 5),
+                            left: 20, bottom: 100, right: 20, top: 5),
                         child: FloatingActionButton(
                           onPressed: () async {
                             showModalBottomSheet(
@@ -359,8 +418,298 @@ class _HomepageState1 extends State<Homepage1> {
                                           width: 20,
                                           height: 20,
                                         ),
-                                        
-
+                                        ListTile(
+                                          title: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 5,
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Text(
+                                                    'Car accident',
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontFamily: "Oswald",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 0,
+                                                      bottom: 5,
+                                                      right: 20,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Checkbox(
+                                                    checkColor: Colors.white,
+                                                    fillColor:
+                                                        MaterialStateProperty
+                                                            .resolveWith<
+                                                                Color>((Set<
+                                                                    MaterialState>
+                                                                states) {
+                                                      if (states.contains(
+                                                          MaterialState
+                                                              .disabled)) {
+                                                        return Colors.pink;
+                                                      }
+                                                      return Colors.pink;
+                                                    }),
+                                                    value: isChecked1,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        isChecked1 = value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 35,
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Text(
+                                                    'Theft',
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontFamily: "Oswald",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 0,
+                                                      bottom: 5,
+                                                      right: 20,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Checkbox(
+                                                    checkColor: Colors.white,
+                                                    fillColor:
+                                                        MaterialStateProperty
+                                                            .resolveWith<
+                                                                Color>((Set<
+                                                                    MaterialState>
+                                                                states) {
+                                                      if (states.contains(
+                                                          MaterialState
+                                                              .disabled)) {
+                                                        return Colors
+                                                            .purple.shade600;
+                                                      }
+                                                      return Colors
+                                                          .purple.shade600;
+                                                    }),
+                                                    value: isChecked2,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        isChecked2 = value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        ListTile(
+                                          title: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 5,
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Text(
+                                                    'Fight',
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontFamily: "Oswald",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 0,
+                                                      bottom: 5,
+                                                      right: 20,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Checkbox(
+                                                    checkColor: Colors.white,
+                                                    fillColor:
+                                                        MaterialStateProperty
+                                                            .resolveWith<
+                                                                Color>((Set<
+                                                                    MaterialState>
+                                                                states) {
+                                                      if (states.contains(
+                                                          MaterialState
+                                                              .disabled)) {
+                                                        return Colors
+                                                            .orange.shade600;
+                                                      }
+                                                      return Colors
+                                                          .orange.shade600;
+                                                    }),
+                                                    value: isChecked3,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        isChecked3 = value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 35,
+                                                      bottom: 5,
+                                                      right: 0,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Text(
+                                                    'Crime',
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontFamily: "Oswald",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 0,
+                                                      bottom: 5,
+                                                      right: 20,
+                                                      top:
+                                                          5), //apply padding to all four sides
+                                                  child: Checkbox(
+                                                    checkColor: Colors.white,
+                                                    fillColor:
+                                                        MaterialStateProperty
+                                                            .resolveWith<
+                                                                Color>((Set<
+                                                                    MaterialState>
+                                                                states) {
+                                                      if (states.contains(
+                                                          MaterialState
+                                                              .disabled)) {
+                                                        return Colors
+                                                            .red.shade600;
+                                                      }
+                                                      return Colors
+                                                          .red.shade600;
+                                                    }),
+                                                    value: isChecked4,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        isChecked4 = value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 130, // <-- Your width
+                                          height: 50, // <-- Your height
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromRGBO(
+                                                    0, 86, 91, 1),
+                                                textStyle: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10))),
+                                            child: const Text('Submit'),
+                                            onPressed: () async {
+                                              setState(() {
+                                                markers.clear();
+                                              });
+                                              getDataBase();
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.all(8),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  });
+                                });
+                          },
+                          child: Icon(Icons.info),
+                          backgroundColor: Colors.grey,
+                        ),
+                      )),
+                  Align(
+                      alignment: Alignment.bottomLeft,
+                      // add your floating action button
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, bottom: 30, right: 20, top: 5),
+                        child: FloatingActionButton(
+                          onPressed: () async {
+                            showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20))),
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return StatefulBuilder(builder: (BuildContext
+                                          context,
+                                      StateSetter
+                                          setState /*You can rename this!*/) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                        ),
                                         Padding(
                                           padding: EdgeInsets.only(
                                               left: 20,
@@ -375,13 +724,12 @@ class _HomepageState1 extends State<Homepage1> {
                                                 Icons.arrow_downward),
                                             elevation: 16,
                                             style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w400,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w400,
                                                 color: Colors.black),
                                             underline: Container(
                                               height: 2,
                                               width: 300,
-                                              
                                               color: Colors.grey,
                                             ),
                                             onChanged: (String? value) {
@@ -405,7 +753,8 @@ class _HomepageState1 extends State<Homepage1> {
                                               left: 20,
                                               bottom: 20,
                                               right: 20,
-                                              top:5), //apply padding to all four sides
+                                              top:
+                                                  5), //apply padding to all four sides
                                           child: TextFormField(
                                             decoration: InputDecoration(
                                               filled: true,
@@ -417,7 +766,7 @@ class _HomepageState1 extends State<Homepage1> {
                                               labelText: 'Description',
                                             ),
                                             showCursor: false,
-                                            controller: passwordController,
+                                            controller: emailController,
                                             autovalidateMode: AutovalidateMode
                                                 .onUserInteraction,
                                             validator: (value) =>
@@ -444,6 +793,7 @@ class _HomepageState1 extends State<Homepage1> {
                                                             10))),
                                             child: const Text('Add'),
                                             onPressed: () async {
+                                              getDataBase();
                                               final coordinated =
                                                   new geoCo.Coordinates(
                                                       latitude, longtude);
@@ -467,8 +817,7 @@ class _HomepageState1 extends State<Homepage1> {
                                                 'longitude': longtude,
                                                 'Description':
                                                     emailController.text.trim(),
-                                                'Type': passwordController.text
-                                                    .trim(),
+                                                'Type': dropdownValue,
                                                 'Address':
                                                     firstAddress.addressLine,
                                                 'Country':
@@ -479,7 +828,7 @@ class _HomepageState1 extends State<Homepage1> {
                                                     .add(Duration(minutes: 30)),
                                               });
 
-                                              // Navigator.pop(context);
+                                              Navigator.pop(context);
                                             },
                                           ),
                                         ),

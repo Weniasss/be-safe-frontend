@@ -83,18 +83,30 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 200.0, right: 100.0),
+            padding: EdgeInsets.only(top: 200.0, right: 200.0),
             // ignore: unnecessary_const
             child: ElevatedButton(
-              child: Text('Get started'),
+              child: Text('Get started',
+               style: TextStyle(
+                  fontSize: 20.0,
+                  fontFamily: "Oswald",
+                  fontWeight: FontWeight.w500,
+                ),),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(0, 86, 91, 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Homepage1()),
+                  MaterialPageRoute(
+                      builder: (context) =>  MyApp1()),
                 );
               },
+              ),//s,
             ),
-          )
         ],
       ),
     )
