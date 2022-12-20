@@ -665,15 +665,7 @@ class _HomepageState1 extends State<Homepage1> {
                                             },
                                           ),
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.all(8),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                    .viewInsets
-                                                    .bottom),
-                                          ),
-                                        )
+                                        
                                       ],
                                     );
                                   });
