@@ -1,4 +1,5 @@
 import 'package:besafe/main.dart';
+import 'package:besafe/map.dart';
 import 'package:besafe/sign_up.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
@@ -58,7 +59,7 @@ class _LoginState extends State<Login> {
       });
 
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => MyHomePage(title: "")),
+          MaterialPageRoute(builder: (_) => MyApp1()),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       var title = '';

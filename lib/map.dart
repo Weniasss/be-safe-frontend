@@ -308,8 +308,8 @@ class _HomepageState1 extends State<Homepage1> {
   }
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
+    target: LatLng(51.773471313024466, 19.44957934319973),
+    zoom: 13,
   );
 
   @override
@@ -819,6 +819,8 @@ class _HomepageState1 extends State<Homepage1> {
                                                 'Time': DateTime.now()
                                                     .add(Duration(minutes: 30)),
                                               });
+
+                                              emailController.text = "";
 
                                               Navigator.pop(context);
                                             },
